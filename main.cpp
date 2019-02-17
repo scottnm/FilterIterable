@@ -1,61 +1,58 @@
 #include <cstdio>
-#include <windows.h>
 #include <vector>
 #include <iterator>
 #include <type_traits>
-#include <iostream>
 #include <list>
 #include <functional>
 
 template<typename T>
-struct iterator_for
+struct iterator_type
 {
     typedef typename T::iterator  type;
 };
 
 template<class T>
-struct iterator_for<T*>
+struct iterator_type<T*>
 {
     typedef T*  type;
 };
 
 template <typename T, size_t N>
-struct iterator_for<T[N]>
+struct iterator_type<T[N]>
 {
     typedef T*  type;
 };
 
 template <typename TIterable, typename TPredicate>
-class filter_iter
+class FilterIterable
 {
 public:
-    typename typedef iterator_for<TIterable>::type TIterator;
+    typename typedef iterator_type<TIterable>::type TIterator;
     typename typedef std::iterator_traits<TIterator>::value_type value_type;
 
-    filter_iter(TIterable& iter, const TPredicate& pred) :
+    FilterIterable(TIterable& iter, const TPredicate& pred) :
         iter(iter),
         pred(pred)
     {
-        std::cout << typeid(TIterable).name() << std::endl;
-        std::cout << typeid(TIterator).name() << std::endl;
+        printf("iterable: %s\niterator: %s\n", typeid(TIterable).name(), typeid(TIterator).name());
     }
 
-    class filter_iter_pos
+    class FilterIterator
     {
     public:
-        filter_iter_pos(const TIterator& c, const TIterator& e, const TPredicate& pred) : c(c), e(e), pred(pred)
+        FilterIterator(const TIterator& c, const TIterator& e, const TPredicate& pred) : c(c), e(e), pred(pred)
         {
             advanceUntilValid();
         }
 
-        bool operator ==(const filter_iter_pos& pos) {
+        bool operator ==(const FilterIterator& pos) {
             return pos.c == c;
         }
-        bool operator !=(const filter_iter_pos& pos) {
+        bool operator !=(const FilterIterator& pos) {
             return !(*this == pos);
         }
 
-        filter_iter_pos&
+        FilterIterator&
         operator ++()
         {
             ++c;
@@ -83,19 +80,17 @@ public:
         const TPredicate pred;
     };
 
-    filter_iter_pos
+    FilterIterator
     begin()
     {
-        return filter_iter_pos(std::begin(iter), std::end(iter), pred);
+        return FilterIterator(std::begin(iter), std::end(iter), pred);
     }
 
-    filter_iter_pos
+    FilterIterator
     end()
     {
-        return filter_iter_pos(std::end(iter), std::end(iter), pred);
+        return FilterIterator(std::end(iter), std::end(iter), pred);
     }
-
-    typedef filter_iter_pos iterator;
 
 private:
     TIterable& iter;
@@ -103,10 +98,10 @@ private:
 };
 
 template <typename TIterable, typename TPredicate>
-filter_iter<TIterable, TPredicate>
-f_filter_iter(TIterable& iter, TPredicate pred)
+FilterIterable<TIterable, TPredicate>
+Filter(TIterable& iter, TPredicate pred)
 {
-    return filter_iter<TIterable, TPredicate>{iter, pred};
+    return FilterIterable<TIterable, TPredicate>{iter, pred};
 }
 
 bool IsEven(int v) { return (v & 1) == 0; }
@@ -114,7 +109,7 @@ bool IsEven(int v) { return (v & 1) == 0; }
 void test1()
 {
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    auto iter = filter_iter<int[11], bool(*)(int)>(values, IsEven);
+    auto iter = FilterIterable<int[11], bool(*)(int)>(values, IsEven);
     for (const int& i : iter)
     {
         printf("%i ", i);
@@ -124,7 +119,7 @@ void test1()
 void test2()
 {
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    for (const int& i : f_filter_iter(values, IsEven))
+    for (const int& i : Filter(values, IsEven))
     {
         printf("%i ", i);
     }
@@ -133,7 +128,7 @@ void test2()
 void test3()
 {
     std::vector<int> values = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    for (const int& i : f_filter_iter(values, IsEven))
+    for (const int& i : Filter(values, IsEven))
     {
         printf("%i ", i);
     }
@@ -146,7 +141,7 @@ void test4()
     {
         values.emplace_back(i);
     }
-    auto iter = f_filter_iter(values, IsEven);
+    auto iter = Filter(values, IsEven);
     for (const int& i : iter)
     {
         printf("%i ", i);
@@ -165,7 +160,7 @@ void test5()
     {
         values.push_back({i});
     }
-    auto iter = f_filter_iter(values, [](const SomeObject& so) { return so.i & 1 == 1; });
+    auto iter = Filter(values, [](const SomeObject& so) { return so.i & 1 == 1; });
     for (const SomeObject& so : iter)
     {
         printf("so(%i) ", so.i);
@@ -190,7 +185,7 @@ void test6()
         values.push_back({i});
     }
     const SomeObject& so3 = values[3];
-    auto iter = f_filter_iter(values, [&so3](const SomeObject& so) { return &so == &so3; });
+    auto iter = Filter(values, [&so3](const SomeObject& so) { return &so == &so3; });
     for (const SomeObject& so : iter)
     {
         printf("so(%i) ", so.i);
@@ -205,7 +200,7 @@ void test7()
         values.push_back({i});
     }
     const SomeObject& so3 = values[3];
-    for (const SomeObject& so : f_filter_iter(values, Excluder(so3)))
+    for (const SomeObject& so : Filter(values, Excluder(so3)))
     {
         printf("so(%i) ", so.i);
     }
