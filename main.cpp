@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <windows.h>
 #include <vector>
 #include <iterator>
 #include <type_traits>
@@ -38,54 +39,66 @@ public:
         iter(iter),
         pred(pred)
     {
+        std::cout << typeid(TIterable).name() << std::endl;
+        std::cout << typeid(TIterator).name() << std::endl;
     }
 
     class filter_iter_pos
     {
     public:
-        filter_iter_pos(const TIterator& i, const TPredicate& pred) : i(i), pred(pred) {}
+        filter_iter_pos(const TIterator& c, const TIterator& e, const TPredicate& pred) : c(c), e(e), pred(pred) {}
 
-        bool operator ==(const filter_iter_pos& pos) { return pos.i == i; }
-        bool operator !=(const filter_iter_pos& pos) { return !(*this == pos); }
+        bool operator ==(const filter_iter_pos& pos) {
+            return pos.c == c;
+        }
+        bool operator !=(const filter_iter_pos& pos) {
+            return !(*this == pos);
+        }
 
         filter_iter_pos&
         operator ++()
         {
             do
             {
-                ++i;
-            } while (!pred(*i));
+                ++c;
+            } while (c != e && !pred(*c));
             return *this;
         }
 
-              value_type* operator->()       { return i; }
-        const value_type* operator->() const { return i; }
-              value_type& operator *()       { return *i; }
-        const value_type& operator *() const { return *i; }
+              value_type* operator->()       { return c; }
+        const value_type* operator->() const { return c; }
+              value_type& operator *()       { return *c; }
+        const value_type& operator *() const { return *c; }
 
     private:
-        TIterator i;
+        TIterator c;
+        TIterator e;
         const TPredicate pred;
     };
 
     filter_iter_pos
     begin()
     {
-        filter_iter_pos x(std::begin(iter), pred);
-        return x;
+        return filter_iter_pos(std::begin(iter), std::end(iter), pred);
     }
 
     filter_iter_pos
     end()
     {
-        filter_iter_pos y(std::end(iter), pred);
-        return y;
+        return filter_iter_pos(std::end(iter), std::end(iter), pred);
     }
 
 private:
     TIterable& iter;
     const TPredicate pred;
 };
+
+template <typename TIterable, typename TPredicate>
+filter_iter<TIterable, TPredicate>
+f_filter_iter(TIterable& iter, TPredicate pred)
+{
+    return filter_iter<TIterable, TPredicate>{iter, pred};
+}
 
 bool IsEven(int v) { return (v & 1) == 0; }
 
@@ -100,7 +113,19 @@ void test1()
     printf("\nDone\n");
 }
 
+void test2()
+{
+    int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    auto iter = f_filter_iter<int[11], bool(*)(int)>(values, IsEven);
+    for (const int& i : iter)
+    {
+        printf("%i ", i);
+    }
+    printf("\nDone\n");
+}
+
 int main()
 {
     test1();
+    test2();
 }
