@@ -6,117 +6,135 @@
 #include <functional>
 
 template<typename T>
-struct iterator_type
+struct IteratorType
 {
     typedef typename T::iterator  type;
 };
 
 template<class T>
-struct iterator_type<T*>
+struct IteratorType<T*>
 {
     typedef T*  type;
 };
 
 template <typename T, size_t N>
-struct iterator_type<T[N]>
+struct IteratorType<T[N]>
 {
     typedef T*  type;
 };
 
 template <typename TIterable, typename TPredicate>
-class FilterIterable
+class FilteredIterable
 {
 public:
-    typename typedef iterator_type<TIterable>::type TIterator;
-    typename typedef std::iterator_traits<TIterator>::value_type value_type;
+    typename typedef IteratorType<TIterable>::type TIterator;
+    typename typedef std::iterator_traits<TIterator>::value_type TValue;
 
-    FilterIterable(TIterable& iter, const TPredicate& pred) :
-        iter(iter),
-        pred(pred)
+    FilteredIterable(
+        TIterable& iterable,
+        TPredicate predicate
+        ) :
+        iterable(iterable),
+        predicate(predicate)
     {
+#ifdef PRINT_ITER_TYPES
         printf("iterable: %s\niterator: %s\n", typeid(TIterable).name(), typeid(TIterator).name());
+#endif // PRINT_ITER_TYPES
     }
 
     class FilterIterator
     {
     public:
-        FilterIterator(const TIterator& c, const TIterator& e, const TPredicate& pred) : c(c), e(e), pred(pred)
+        FilterIterator(
+            const TIterator& current,
+            const TIterator& end,
+            TPredicate predicate
+            ) :
+            current(current),
+            end(end),
+            predicate(predicate)
         {
             advanceUntilValid();
         }
 
-        bool operator ==(const FilterIterator& pos) {
-            return pos.c == c;
-        }
-        bool operator !=(const FilterIterator& pos) {
-            return !(*this == pos);
-        }
-
         FilterIterator&
-        operator ++()
+        operator++()
         {
-            ++c;
+            ++current;
             advanceUntilValid();
             return *this;
         }
 
-              value_type* operator->()       { return c; }
-        const value_type* operator->() const { return c; }
-              value_type& operator *()       { return *c; }
-        const value_type& operator *() const { return *c; }
+        bool operator==(const FilterIterator& other) { return current == other.current; }
+        bool operator!=(const FilterIterator& other) { return !(*this == other); }
+        TValue* operator->() { return current; }
+        TValue& operator *() { return *current; }
+        const TValue* operator->() const { return current; }
+        const TValue& operator *() const { return *current; }
 
     private:
         void
         advanceUntilValid()
         {
-            while (c != e && pred(*c))
+            while (current != end && predicate(*current))
             {
-                ++c;
+                ++current;
             }
         }
 
-        TIterator c;
-        TIterator e;
-        const TPredicate pred;
+        TIterator current;
+        const TIterator end;
+        TPredicate predicate;
     };
 
     FilterIterator
     begin()
     {
-        return FilterIterator(std::begin(iter), std::end(iter), pred);
+        return FilterIterator(std::begin(iterable), std::end(iterable), predicate);
     }
 
     FilterIterator
     end()
     {
-        return FilterIterator(std::end(iter), std::end(iter), pred);
+        return FilterIterator(std::end(iterable), std::end(iterable), predicate);
     }
 
 private:
-    TIterable& iter;
-    const TPredicate pred;
+    TIterable& iterable;
+    TPredicate predicate;
 };
 
 template <typename TIterable, typename TPredicate>
-FilterIterable<TIterable, TPredicate>
-Filter(TIterable& iter, TPredicate pred)
+FilteredIterable<TIterable, TPredicate>
+Filter(
+    TIterable& iterable,
+    TPredicate predicate
+    )
 {
-    return FilterIterable<TIterable, TPredicate>{iter, pred};
+    return FilteredIterable<TIterable, TPredicate>{iterable, predicate};
 }
 
-bool IsEven(int v) { return (v & 1) == 0; }
+bool
+IsEven(
+    int v
+    )
+{
+    return (v & 1) == 0;
+}
 
-void test1()
+void
+TestIterableConstruction()
 {
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    auto iter = FilterIterable<int[11], bool(*)(int)>(values, IsEven);
+    auto iter = FilteredIterable<int[11], bool(*)(int)>(values, IsEven);
     for (const int& i : iter)
     {
         printf("%i ", i);
     }
 }
 
-void test2()
+void
+TestFilterStackArrays()
 {
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     for (const int& i : Filter(values, IsEven))
@@ -125,7 +143,8 @@ void test2()
     }
 }
 
-void test3()
+void
+TestFilterContainerTypes()
 {
     std::vector<int> values = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     for (const int& i : Filter(values, IsEven))
@@ -134,7 +153,8 @@ void test3()
     }
 }
 
-void test4()
+void
+TestFilterNonRandomAccessIterable()
 {
     std::list<int> values;
     for (uint32_t i = 0; i <= 10; ++i)
@@ -153,14 +173,31 @@ struct SomeObject
     uint32_t i;
 };
 
-void test5()
+void
+TestFilterByObjectProperty()
 {
     std::list<SomeObject> values;
     for (uint32_t i = 0; i <= 10; ++i)
     {
         values.push_back({i});
     }
-    auto iter = Filter(values, [](const SomeObject& so) { return so.i & 1 == 1; });
+    auto iter = Filter(values, [](const SomeObject& so) { return !IsEven(so.i); });
+    for (const SomeObject& so : iter)
+    {
+        printf("so(%i) ", so.i);
+    }
+}
+
+void
+TestFilterByUniqueObject()
+{
+    std::vector<SomeObject> values;
+    for (uint32_t i = 0; i <= 10; ++i)
+    {
+        values.push_back({i});
+    }
+    const SomeObject& so3 = values[3];
+    auto iter = Filter(values, [&so3](const SomeObject& so) { return &so == &so3; });
     for (const SomeObject& so : iter)
     {
         printf("so(%i) ", so.i);
@@ -176,45 +213,50 @@ Excluder(
     return [&elementToExclude](const T& t) { return &t == &elementToExclude; };
 }
 
-
-void test6()
+void
+TestFilterWithHigherOrderFunctions()
 {
     std::vector<SomeObject> values;
     for (uint32_t i = 0; i <= 10; ++i)
     {
         values.push_back({i});
     }
-    const SomeObject& so3 = values[3];
-    auto iter = Filter(values, [&so3](const SomeObject& so) { return &so == &so3; });
-    for (const SomeObject& so : iter)
+    for (const SomeObject& so : Filter(values, Excluder(values[4])))
     {
         printf("so(%i) ", so.i);
     }
 }
 
-void test7()
+template<typename T, size_t N>
+constexpr
+size_t
+CountOf(
+    T(&arr)[N]
+    )
 {
-    std::vector<SomeObject> values;
-    for (uint32_t i = 0; i <= 10; ++i)
-    {
-        values.push_back({i});
-    }
-    const SomeObject& so3 = values[3];
-    for (const SomeObject& so : Filter(values, Excluder(so3)))
-    {
-        printf("so(%i) ", so.i);
-    }
+    return N;
 }
 
-int main()
+int
+main()
 {
     typedef void(*testfunc)(void);
 
-    testfunc tests[] = {test1, test2, test3, test4, test5, test6, test7};
-    int i = 1;
-    for (auto test : tests)
+    testfunc tests[] =
     {
-        test();
-        printf("\nDone: %i\n\n", i++);
+        TestIterableConstruction,
+        TestFilterStackArrays,
+        TestFilterContainerTypes,
+        TestFilterNonRandomAccessIterable,
+        TestFilterByObjectProperty,
+        TestFilterByUniqueObject,
+        TestFilterWithHigherOrderFunctions
+    };
+
+    for (size_t i = 0; i < CountOf(tests); ++i)
+    {
+        printf("%llu) ", i);
+        tests[i]();
+        printf("\n\n");
     }
 }
