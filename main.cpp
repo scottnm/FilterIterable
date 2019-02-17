@@ -104,28 +104,3 @@ int main()
 {
     test1();
 }
-
-/*
-template<typename T>
-void
-PrintTypes(const T& v)
-{
-    typename typedef iterator_for<T>::type iterator_type;
-    std::cout <<  "TYPES" << std::endl;
-    (void)v;
-    std::cout << typeid(iterator_type).name() << std::endl;
-    std::cout << std::endl;
-}
-
-int main()
-{
-    int a[5];
-    PrintTypes(a);
-
-    typedef iterator_for<int[5]>::type test_type;
-    test_type i = nullptr;
-
-    std::vector<int> b;
-    PrintTypes(b);
-}
-*/
