@@ -56,14 +56,14 @@ public:
             end(end),
             predicate(predicate)
         {
-            advanceUntilValid();
+            AdvanceUntilValid();
         }
 
         FilterIterator&
         operator++()
         {
             ++current;
-            advanceUntilValid();
+            AdvanceUntilValid();
             return *this;
         }
 
@@ -76,7 +76,7 @@ public:
 
     private:
         void
-        advanceUntilValid()
+        AdvanceUntilValid()
         {
             while (current != end && predicate(*current))
             {
