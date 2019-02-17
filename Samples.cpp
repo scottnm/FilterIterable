@@ -1,118 +1,9 @@
 #include <cstdio>
 #include <vector>
-#include <iterator>
-#include <type_traits>
 #include <list>
 #include <functional>
 
-template<typename T>
-struct IteratorType
-{
-    typedef typename T::iterator  type;
-};
-
-template<class T>
-struct IteratorType<T*>
-{
-    typedef T*  type;
-};
-
-template <typename T, size_t N>
-struct IteratorType<T[N]>
-{
-    typedef T*  type;
-};
-
-template <typename TIterable, typename TPredicate>
-class FilteredIterable
-{
-public:
-    typename typedef IteratorType<TIterable>::type TIterator;
-    typename typedef std::iterator_traits<TIterator>::value_type TValue;
-
-    FilteredIterable(
-        TIterable& iterable,
-        TPredicate predicate
-        ) :
-        iterable(iterable),
-        predicate(predicate)
-    {
-#ifdef PRINT_ITER_TYPES
-        printf("iterable: %s\niterator: %s\n", typeid(TIterable).name(), typeid(TIterator).name());
-#endif // PRINT_ITER_TYPES
-    }
-
-    class FilterIterator
-    {
-    public:
-        FilterIterator(
-            const TIterator& current,
-            const TIterator& end,
-            TPredicate predicate
-            ) :
-            current(current),
-            end(end),
-            predicate(predicate)
-        {
-            advanceUntilValid();
-        }
-
-        FilterIterator&
-        operator++()
-        {
-            ++current;
-            advanceUntilValid();
-            return *this;
-        }
-
-        bool operator==(const FilterIterator& other) { return current == other.current; }
-        bool operator!=(const FilterIterator& other) { return !(*this == other); }
-        TValue* operator->() { return current; }
-        TValue& operator *() { return *current; }
-        const TValue* operator->() const { return current; }
-        const TValue& operator *() const { return *current; }
-
-    private:
-        void
-        advanceUntilValid()
-        {
-            while (current != end && predicate(*current))
-            {
-                ++current;
-            }
-        }
-
-        TIterator current;
-        const TIterator end;
-        TPredicate predicate;
-    };
-
-    FilterIterator
-    begin()
-    {
-        return FilterIterator(std::begin(iterable), std::end(iterable), predicate);
-    }
-
-    FilterIterator
-    end()
-    {
-        return FilterIterator(std::end(iterable), std::end(iterable), predicate);
-    }
-
-private:
-    TIterable& iterable;
-    TPredicate predicate;
-};
-
-template <typename TIterable, typename TPredicate>
-FilteredIterable<TIterable, TPredicate>
-Filter(
-    TIterable& iterable,
-    TPredicate predicate
-    )
-{
-    return FilteredIterable<TIterable, TPredicate>{iterable, predicate};
-}
+#include "FilterIterable.h"
 
 bool
 IsEven(
@@ -241,15 +132,27 @@ int
 main()
 {
     typedef void(*testfunc)(void);
-
     testfunc tests[] =
     {
+        // 0) 1 3 5 7 9
         TestIterableConstruction,
+
+        // 1) 1 3 5 7 9
         TestFilterStackArrays,
+
+        // 2) 1 3 5 7 9
         TestFilterContainerTypes,
+
+        // 3) 1 3 5 7 9
         TestFilterNonRandomAccessIterable,
+
+        // 4) so(0) so(2) so(4) so(6) so(8) so(10)
         TestFilterByObjectProperty,
+
+        // 5) so(0) so(1) so(2) so(4) so(5) so(6) so(7) so(8) so(9) so(10)
         TestFilterByUniqueObject,
+
+        // 6) so(0) so(1) so(2) so(3) so(5) so(6) so(7) so(8) so(9) so(10)
         TestFilterWithHigherOrderFunctions
     };
 
