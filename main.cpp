@@ -4,6 +4,7 @@
 #include <iterator>
 #include <type_traits>
 #include <iostream>
+#include <list>
 
 template<typename T>
 struct iterator_for
@@ -46,7 +47,10 @@ public:
     class filter_iter_pos
     {
     public:
-        filter_iter_pos(const TIterator& c, const TIterator& e, const TPredicate& pred) : c(c), e(e), pred(pred) {}
+        filter_iter_pos(const TIterator& c, const TIterator& e, const TPredicate& pred) : c(c), e(e), pred(pred)
+        {
+            advanceUntilValid();
+        }
 
         bool operator ==(const filter_iter_pos& pos) {
             return pos.c == c;
@@ -58,10 +62,8 @@ public:
         filter_iter_pos&
         operator ++()
         {
-            do
-            {
-                ++c;
-            } while (c != e && !pred(*c));
+            ++c;
+            advanceUntilValid();
             return *this;
         }
 
@@ -71,6 +73,15 @@ public:
         const value_type& operator *() const { return *c; }
 
     private:
+        void
+        advanceUntilValid()
+        {
+            while (c != e && !pred(*c))
+            {
+                ++c;
+            }
+        }
+
         TIterator c;
         TIterator e;
         const TPredicate pred;
@@ -110,22 +121,101 @@ void test1()
     {
         printf("%i ", i);
     }
-    printf("\nDone\n");
 }
 
 void test2()
 {
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    auto iter = f_filter_iter<int[11], bool(*)(int)>(values, IsEven);
+    for (const int& i : f_filter_iter(values, IsEven))
+    {
+        printf("%i ", i);
+    }
+}
+
+void test3()
+{
+    std::vector<int> values = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    for (const int& i : f_filter_iter(values, IsEven))
+    {
+        printf("%i ", i);
+    }
+}
+
+void test4()
+{
+    std::list<int> values;
+    for (uint32_t i = 0; i <= 10; ++i)
+    {
+        values.emplace_back(i);
+    }
+    auto iter = f_filter_iter(values, IsEven);
     for (const int& i : iter)
     {
         printf("%i ", i);
     }
-    printf("\nDone\n");
 }
+
+struct SomeObject
+{
+    uint32_t i;
+};
+
+void test5()
+{
+    std::list<SomeObject> values;
+    for (uint32_t i = 0; i <= 10; ++i)
+    {
+        values.push_back({i});
+    }
+    auto iter = f_filter_iter(values, [](const SomeObject& so) { return so.i & 1 == 1; });
+    for (const SomeObject& so : iter)
+    {
+        printf("so(%i) ", so.i);
+    }
+}
+
+void test6()
+{
+    std::vector<SomeObject> values;
+    for (uint32_t i = 0; i <= 10; ++i)
+    {
+        values.push_back({i});
+    }
+    const SomeObject& so3 = values[3];
+    auto iter = f_filter_iter(values, [&so3](const SomeObject& so) { return &so == &so3; });
+    for (const SomeObject& so : iter)
+    {
+        printf("so(%i) ", so.i);
+    }
+}
+
+void test7()
+{
+    /*
+    std::list<SomeObject> values;
+    for (uint32_t i = 0; i <= 10; ++i)
+    {
+        values.emplace_back(i);
+    }
+    auto iter = f_filter_iter(values, [](const SomeObject& so) { return so.i & 1 == 1; });
+    for (const SomeObject& so : iter)
+    {
+        printf("so(%i) ", so.);
+    }
+    */
+    // what would chaining look like? do I just need to define an filter_iter_pos as my iterator? type?
+}
+
 
 int main()
 {
-    test1();
-    test2();
+    typedef void(*testfunc)(void);
+
+    testfunc tests[] = {test1, test2, test3, test4, test5, test6, test7};
+    int i = 1;
+    for (auto test : tests)
+    {
+        test();
+        printf("\nDone: %i\n\n", i++);
+    }
 }
