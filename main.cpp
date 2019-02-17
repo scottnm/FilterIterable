@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <iostream>
 #include <list>
+#include <functional>
 
 template<typename T>
 struct iterator_for
@@ -29,12 +30,7 @@ class filter_iter
 {
 public:
     typename typedef iterator_for<TIterable>::type TIterator;
-
     typename typedef std::iterator_traits<TIterator>::value_type value_type;
-    typename typedef std::iterator_traits<TIterator>::reference reference;
-    typename typedef std::iterator_traits<TIterator>::pointer pointer;
-    typename typedef std::iterator_traits<TIterator>::difference_type difference_type;
-    typename typedef std::iterator_traits<TIterator>::iterator_category iterator_category;
 
     filter_iter(TIterable& iter, const TPredicate& pred) :
         iter(iter),
@@ -76,7 +72,7 @@ public:
         void
         advanceUntilValid()
         {
-            while (c != e && !pred(*c))
+            while (c != e && pred(*c))
             {
                 ++c;
             }
@@ -98,6 +94,8 @@ public:
     {
         return filter_iter_pos(std::end(iter), std::end(iter), pred);
     }
+
+    typedef filter_iter_pos iterator;
 
 private:
     TIterable& iter;
@@ -174,6 +172,16 @@ void test5()
     }
 }
 
+template<typename T>
+std::function<bool (const T&)>
+Excluder(
+    const T& elementToExclude
+    )
+{
+    return [&elementToExclude](const T& t) { return &t == &elementToExclude; };
+}
+
+
 void test6()
 {
     std::vector<SomeObject> values;
@@ -191,21 +199,17 @@ void test6()
 
 void test7()
 {
-    /*
-    std::list<SomeObject> values;
+    std::vector<SomeObject> values;
     for (uint32_t i = 0; i <= 10; ++i)
     {
-        values.emplace_back(i);
+        values.push_back({i});
     }
-    auto iter = f_filter_iter(values, [](const SomeObject& so) { return so.i & 1 == 1; });
-    for (const SomeObject& so : iter)
+    const SomeObject& so3 = values[3];
+    for (const SomeObject& so : f_filter_iter(values, Excluder(so3)))
     {
-        printf("so(%i) ", so.);
+        printf("so(%i) ", so.i);
     }
-    */
-    // what would chaining look like? do I just need to define an filter_iter_pos as my iterator? type?
 }
-
 
 int main()
 {
