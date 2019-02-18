@@ -122,7 +122,7 @@ template<typename T, size_t N>
 constexpr
 size_t
 CountOf(
-    T(&arr)[N]
+    T(&)[N]
     )
 {
     return N;
