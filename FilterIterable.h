@@ -30,7 +30,7 @@ public:
     };
 
     typename typedef IteratorType<TIterable>::type TIterator;
-    typename typedef std::iterator_traits<TIterator>::value_type TValue;
+    typename typedef std::iterator_traits<TIterator>::value_type TItem;
 
     FilteredIterable(
         TIterable& iterable,
@@ -69,10 +69,10 @@ public:
 
         bool operator==(const FilterIterator& other) { return current == other.current; }
         bool operator!=(const FilterIterator& other) { return !(*this == other); }
-        TValue* operator->() { return current; }
-        TValue& operator *() { return *current; }
-        const TValue* operator->() const { return current; }
-        const TValue& operator *() const { return *current; }
+        TItem* operator->() { return current; }
+        TItem& operator *() { return *current; }
+        const TItem* operator->() const { return current; }
+        const TItem& operator *() const { return *current; }
 
     private:
         void
