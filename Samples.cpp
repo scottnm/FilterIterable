@@ -62,6 +62,14 @@ TestFilterNonRandomAccessIterable()
 struct SomeObject
 {
     uint32_t i;
+
+    // Explictly define a constructor + delete all implicit copy/move business to verify that no part of the filter
+    // utility results in a copy
+    SomeObject(int i) : i(i) {}
+    SomeObject(const SomeObject&) = delete;
+    SomeObject(SomeObject&&) = delete;
+    SomeObject& operator=(const SomeObject&) = delete;
+    SomeObject& operator=(SomeObject&&) = delete;
 };
 
 void
@@ -70,7 +78,7 @@ TestFilterByObjectProperty()
     std::list<SomeObject> values;
     for (uint32_t i = 0; i <= 10; ++i)
     {
-        values.push_back({i});
+        values.emplace_back(i);
     }
     auto iter = Filter(values, [](const SomeObject& so) { return !IsEven(so.i); });
     for (const SomeObject& so : iter)
@@ -82,11 +90,8 @@ TestFilterByObjectProperty()
 void
 TestFilterByUniqueObject()
 {
-    std::vector<SomeObject> values;
-    for (uint32_t i = 0; i <= 10; ++i)
-    {
-        values.push_back({i});
-    }
+    SomeObject values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
     const SomeObject& so3 = values[3];
     auto iter = Filter(values, [&so3](const SomeObject& so) { return &so == &so3; });
     for (const SomeObject& so : iter)
@@ -107,11 +112,7 @@ Excluder(
 void
 TestFilterWithHigherOrderFunctions()
 {
-    std::vector<SomeObject> values;
-    for (uint32_t i = 0; i <= 10; ++i)
-    {
-        values.push_back({i});
-    }
+    SomeObject values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
     for (const SomeObject& so : Filter(values, Excluder(values[4])))
     {
         printf("so(%i) ", so.i);
@@ -158,7 +159,7 @@ main()
 
     for (size_t i = 0; i < CountOf(tests); ++i)
     {
-        printf("%llu) ", i);
+        printf("%zu) ", i);
         tests[i]();
         printf("\n\n");
     }
