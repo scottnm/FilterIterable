@@ -29,8 +29,8 @@ public:
         typedef T*  type;
     };
 
-    typename typedef IteratorType<TIterable>::type TIterator;
-    typename typedef std::iterator_traits<TIterator>::value_type TItem;
+    typedef typename IteratorType<TIterable>::type TIterator;
+    typedef typename std::iterator_traits<TIterator>::value_type TItem;
 
     FilteredIterable(
         TIterable& iterable,

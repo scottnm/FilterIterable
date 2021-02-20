@@ -63,11 +63,11 @@ struct SomeObject
 {
     uint32_t i;
 
-    // Explictly define a constructor + delete all implicit copy/move business to verify that no part of the filter
-    // utility results in a copy
+    // Delete copy construction, copy assignment, and move assignment to verify that no part of the filter performs copies.
+    // Leave the move constructor alone since it's used by the array initializers
     SomeObject(int i) : i(i) {}
+    SomeObject(SomeObject&&) = default;
     SomeObject(const SomeObject&) = delete;
-    SomeObject(SomeObject&&) = delete;
     SomeObject& operator=(const SomeObject&) = delete;
     SomeObject& operator=(SomeObject&&) = delete;
 };

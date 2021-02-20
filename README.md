@@ -16,4 +16,4 @@ Check out the `Samples.cpp` for more examples of other ways this can be used.
 ## Features
 
 * supports filtering by function pointers and stateless lambdas as well as stateful closures 
-* Only iterates. No extra allocations or temporary buffers.
+* Only iterates. No extra allocations or temporary copies.

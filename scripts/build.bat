@@ -1,1 +1,1 @@
-cl /EHsc /W4 *.cpp
+cl /EHsc /W4 /permissive- *.cpp
