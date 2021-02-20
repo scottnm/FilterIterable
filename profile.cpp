@@ -35,24 +35,25 @@ bool is_even(int i)
 constexpr uint64_t TRIALS = 10'000'000;
 uint64_t using_filter()
 {
+    uint64_t sum = 0;
     for (uint64_t trial = 0; trial < TRIALS; ++trial)
     {
         int ints[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        uint64_t sum = 0;
         for (const int& i : Filter(ints, is_even))
         {
             sum += i;
         }
     }
+    printf("    sum %llu\n", sum);
     return TRIALS;
 }
 
 uint64_t not_using_filter()
 {
+    uint64_t sum = 0;
     for (uint64_t trial = 0; trial < TRIALS; ++trial)
     {
         int ints[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        uint64_t sum = 0;
         for (const int& i : ints)
         {
             if (is_even(i))
@@ -62,6 +63,7 @@ uint64_t not_using_filter()
         }
     }
 
+    printf("    sum %llu\n", sum);
     return TRIALS;
 }
 
