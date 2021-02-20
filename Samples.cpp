@@ -6,18 +6,18 @@
 #include "FilterIterable.h"
 
 bool
-IsEven(
+IsOdd(
     int v
     )
 {
-    return (v & 1) == 0;
+    return (v & 1) == 1;
 }
 
 void
 TestIterableConstruction()
 {
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    auto iter = FilteredIterable<int[11], bool(*)(int)>(values, IsEven);
+    auto iter = FilteredIterable<int[11], bool(*)(int)>(values, IsOdd);
     for (const int& i : iter)
     {
         printf("%i ", i);
@@ -28,7 +28,7 @@ void
 TestFilterStackArrays()
 {
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    for (const int& i : Filter(values, IsEven))
+    for (const int& i : Filter(values, IsOdd))
     {
         printf("%i ", i);
     }
@@ -38,7 +38,7 @@ void
 TestFilterContainerTypes()
 {
     std::vector<int> values = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    for (const int& i : Filter(values, IsEven))
+    for (const int& i : Filter(values, IsOdd))
     {
         printf("%i ", i);
     }
@@ -52,7 +52,7 @@ TestFilterNonRandomAccessIterable()
     {
         values.emplace_back(i);
     }
-    auto iter = Filter(values, IsEven);
+    auto iter = Filter(values, IsOdd);
     for (const int& i : iter)
     {
         printf("%i ", i);
@@ -80,7 +80,7 @@ TestFilterByObjectProperty()
     {
         values.emplace_back(i);
     }
-    auto iter = Filter(values, [](const SomeObject& so) { return !IsEven(so.i); });
+    auto iter = Filter(values, [](const SomeObject& so) { return !IsOdd(so.i); });
     for (const SomeObject& so : iter)
     {
         printf("so(%i) ", so.i);
@@ -93,7 +93,7 @@ TestFilterByUniqueObject()
     SomeObject values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
     const SomeObject& so3 = values[3];
-    auto iter = Filter(values, [&so3](const SomeObject& so) { return &so == &so3; });
+    auto iter = Filter(values, [&so3](const SomeObject& so) { return &so != &so3; });
     for (const SomeObject& so : iter)
     {
         printf("so(%i) ", so.i);
@@ -106,7 +106,7 @@ Excluder(
     const T& elementToExclude
     )
 {
-    return [&elementToExclude](const T& t) { return &t == &elementToExclude; };
+    return [&elementToExclude](const T& t) { return &t != &elementToExclude; };
 }
 
 void

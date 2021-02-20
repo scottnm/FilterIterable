@@ -5,7 +5,7 @@
 #include <type_traits>
 
 //
-// An iterable over all elements of the source iterable except those which match the predicate
+// An iterable over all elements of the source iterable which match the predicate
 //
 template <typename TIterable, typename TPredicate>
 class FilteredIterable
@@ -78,7 +78,7 @@ public:
         void
         AdvanceUntilValid()
         {
-            while (current != end && predicate(*current))
+            while (current != end && !predicate(*current))
             {
                 ++current;
             }
