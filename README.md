@@ -2,7 +2,7 @@
 
 A tiny, header-only c++ helper to enable iterating over only a filtered subset of a source iterable.
 
-```
+```cpp
 std::string someString = "Catsup OOgLer";
 auto isUpperCase = [](char c) { return c >= 'A' && c <= 'Z'; };
 for (char c : Filter(someString, isUpperCase))
