@@ -1,1 +1,3 @@
-cl /EHsc /W4 /permissive- *.cpp
+cl /EHsc /W4 /permissive- /O2 *.cpp
+
+.\Samples.exe
