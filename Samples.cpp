@@ -163,7 +163,4 @@ main()
         tests[i]();
         printf("\n\n");
     }
-
-    // BREAK THE TEST
-    return 1;
 }
