@@ -6,10 +6,13 @@
 
 #include "FilterIterable.h"
 
+// N.B. sprintf_s doesn't exist outside of windows
 #if !defined(_WIN32) && !defined(WIN32)
 #define sprintf_s sprintf
 #endif
 
+// Define a helper macro to make appending formatted text to a std::string easy.
+// I just don't want to bother with iostream shenanigans. Hurts my eyes.
 #define APPEND_STR(acc, format, ...) \
     do { \
         char appendStrTmpBuffer[1024]; \
@@ -166,16 +169,6 @@ TestFilterWithHigherOrderFunctions()
 
     result.pop_back();
     return result;
-}
-
-template<typename T, size_t N>
-constexpr
-size_t
-CountOf(
-    T(&)[N]
-    )
-{
-    return N;
 }
 
 int
