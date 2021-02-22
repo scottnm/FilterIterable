@@ -1,4 +1,4 @@
-name: Clang Build
+name: Clang Build + Test
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build+test:
 
     runs-on: ubuntu-latest
 
@@ -15,3 +15,5 @@ jobs:
     - uses: actions/checkout@v2
     - name: make clang
       run: make -C cicd_build/ clang_validation
+    - name: test clang
+      run: cicd_build/a.out

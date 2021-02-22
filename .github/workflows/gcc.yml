@@ -1,4 +1,4 @@
-name: GCC Build
+name: GCC Build + Test
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build+test:
 
     runs-on: ubuntu-latest
 
@@ -15,3 +15,5 @@ jobs:
     - uses: actions/checkout@v2
     - name: make gcc
       run: make -C cicd_build/ gcc_validation
+    - name: test gcc
+      run: cicd_build/a.out
