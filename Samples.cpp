@@ -194,8 +194,8 @@ main()
     {
         { "IterableConstruction", TestIterableConstruction, "1 3 5 7 9" },
         { "FilterStackArrays", TestFilterStackArrays, "1 3 5 7 9" },
-        { "FilterContainerTypes", TestFilterContainerTypes, "1 3 5 7 9" },
-        { "FilterNonRandomAccessIterable", TestFilterNonRandomAccessIterable, "1 3 5 7 9" },
+        { "FilterContainerTypes", TestFilterContainerTypes, "1 3 5 6 9" },
+        { "FilterNonRandomAccessIterable", TestFilterNonRandomAccessIterable, "1 3 5 7 8" },
         { "FilterByObjectProperty", TestFilterByObjectProperty, "so(0) so(2) so(4) so(6) so(8) so(10)" },
         { "FilterByUniqueObject", TestFilterByUniqueObject, "so(0) so(1) so(2) so(4) so(5) so(6) so(7) so(8) so(9) so(10)" },
         { "FilterWithHigherOrderFunctions", TestFilterWithHigherOrderFunctions, "so(0) so(1) so(2) so(3) so(5) so(6) so(7) so(8) so(9) so(10)" }
