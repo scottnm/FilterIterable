@@ -1,4 +1,4 @@
-name: MSVC Build
+name: MSVC Build + Test
 
 on: [push]
 
@@ -30,3 +30,7 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Test
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: .\cicd_build\x64\Release\FilterIterable.exe
