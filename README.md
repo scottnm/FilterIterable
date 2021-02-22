@@ -1,5 +1,7 @@
 # FilterIterable
 
+[![MSBuild](https://github.com/scottnm/FilterIterable/actions/workflows/msbuild.yml/badge.svg)](https://github.com/scottnm/FilterIterable/actions/workflows/msbuild.yml)
+
 A tiny, header-only c++ helper to enable iterating over only a filtered subset of a source iterable.
 
 ```cpp
