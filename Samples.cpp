@@ -2,8 +2,20 @@
 #include <vector>
 #include <list>
 #include <functional>
+#include <string>
 
 #include "FilterIterable.h"
+
+#if !defined(_WIN32) && !defined(WIN32)
+#define sprintf_s sprintf
+#endif
+
+#define APPEND_STR(acc, format, ...) \
+    do { \
+        char appendStrTmpBuffer[1024]; \
+        (void)sprintf_s(appendStrTmpBuffer, format, __VA_ARGS__); \
+        acc += appendStrTmpBuffer; \
+    } while (0)
 
 bool
 IsOdd(
@@ -13,50 +25,71 @@ IsOdd(
     return (v & 1) == 1;
 }
 
-void
+std::string
 TestIterableConstruction()
 {
+    std::string result;
+
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     auto iter = FilteredIterable<int[11], bool(*)(int)>(values, IsOdd);
     for (const int& i : iter)
     {
-        printf("%i ", i);
+        APPEND_STR(result, "%i ", i);
     }
+
+    result.pop_back();
+    return result;
 }
 
-void
+std::string
 TestFilterStackArrays()
 {
+    std::string result;
+
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     for (const int& i : Filter(values, IsOdd))
     {
-        printf("%i ", i);
+        APPEND_STR(result, "%i ", i);
     }
+
+    result.pop_back();
+    return result;
 }
 
-void
+std::string
 TestFilterContainerTypes()
 {
+    std::string result;
+
     std::vector<int> values = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     for (const int& i : Filter(values, IsOdd))
     {
-        printf("%i ", i);
+        APPEND_STR(result, "%i ", i);
     }
+
+    result.pop_back();
+    return result;
 }
 
-void
+std::string
 TestFilterNonRandomAccessIterable()
 {
+    std::string result;
+
     std::list<int> values;
     for (uint32_t i = 0; i <= 10; ++i)
     {
         values.emplace_back(i);
     }
+
     auto iter = Filter(values, IsOdd);
     for (const int& i : iter)
     {
-        printf("%i ", i);
+        APPEND_STR(result, "%i ", i);
     }
+
+    result.pop_back();
+    return result;
 }
 
 struct SomeObject
@@ -72,32 +105,43 @@ struct SomeObject
     SomeObject& operator=(SomeObject&&) = delete;
 };
 
-void
+std::string
 TestFilterByObjectProperty()
 {
+    std::string result;
+
     std::list<SomeObject> values;
     for (uint32_t i = 0; i <= 10; ++i)
     {
         values.emplace_back(i);
     }
+
     auto iter = Filter(values, [](const SomeObject& so) { return !IsOdd(so.i); });
     for (const SomeObject& so : iter)
     {
-        printf("so(%i) ", so.i);
+        APPEND_STR(result, "so(%i) ", so.i);
     }
+
+    result.pop_back();
+    return result;
 }
 
-void
+std::string
 TestFilterByUniqueObject()
 {
+    std::string result;
+
     SomeObject values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
     const SomeObject& so3 = values[3];
     auto iter = Filter(values, [&so3](const SomeObject& so) { return &so != &so3; });
     for (const SomeObject& so : iter)
     {
-        printf("so(%i) ", so.i);
+        APPEND_STR(result, "so(%i) ", so.i);
     }
+
+    result.pop_back();
+    return result;
 }
 
 template<typename T>
@@ -109,14 +153,19 @@ Excluder(
     return [&elementToExclude](const T& t) { return &t != &elementToExclude; };
 }
 
-void
+std::string
 TestFilterWithHigherOrderFunctions()
 {
+    std::string result;
+
     SomeObject values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
     for (const SomeObject& so : Filter(values, Excluder(values[4])))
     {
-        printf("so(%i) ", so.i);
+        APPEND_STR(result, "so(%i) ", so.i);
     }
+
+    result.pop_back();
+    return result;
 }
 
 template<typename T, size_t N>
@@ -132,35 +181,47 @@ CountOf(
 int
 main()
 {
-    typedef void(*testfunc)(void);
-    testfunc tests[] =
+    typedef std::string(*testfunc)(void);
+
+    struct Test
     {
-        // 0) 1 3 5 7 9
-        TestIterableConstruction,
-
-        // 1) 1 3 5 7 9
-        TestFilterStackArrays,
-
-        // 2) 1 3 5 7 9
-        TestFilterContainerTypes,
-
-        // 3) 1 3 5 7 9
-        TestFilterNonRandomAccessIterable,
-
-        // 4) so(0) so(2) so(4) so(6) so(8) so(10)
-        TestFilterByObjectProperty,
-
-        // 5) so(0) so(1) so(2) so(4) so(5) so(6) so(7) so(8) so(9) so(10)
-        TestFilterByUniqueObject,
-
-        // 6) so(0) so(1) so(2) so(3) so(5) so(6) so(7) so(8) so(9) so(10)
-        TestFilterWithHigherOrderFunctions
+        const char* name;
+        testfunc func;
+        std::string expectedResult;
     };
 
-    for (size_t i = 0; i < CountOf(tests); ++i)
+    Test tests[] =
     {
-        printf("%zu) ", i);
-        tests[i]();
-        printf("\n\n");
+        { "IterableConstruction", TestIterableConstruction, "1 3 5 7 9" },
+        { "FilterStackArrays", TestFilterStackArrays, "1 3 5 7 9" },
+        { "FilterContainerTypes", TestFilterContainerTypes, "1 3 5 7 9" },
+        { "FilterNonRandomAccessIterable", TestFilterNonRandomAccessIterable, "1 3 5 7 9" },
+        { "FilterByObjectProperty", TestFilterByObjectProperty, "so(0) so(2) so(4) so(6) so(8) so(10)" },
+        { "FilterByUniqueObject", TestFilterByUniqueObject, "so(0) so(1) so(2) so(4) so(5) so(6) so(7) so(8) so(9) so(10)" },
+        { "FilterWithHigherOrderFunctions", TestFilterWithHigherOrderFunctions, "so(0) so(1) so(2) so(3) so(5) so(6) so(7) so(8) so(9) so(10)" }
+    };
+
+    #define ANSI_RED "\033[31m"
+    #define ANSI_RED_BOLD "\033[1;31m"
+    #define ANSI_GREEN "\033[32m"
+    #define ANSI_RESET "\033[0m"
+
+    bool passed = true;
+    for (const auto& test : tests)
+    {
+        printf("Testing %s... ", test.name);
+        std::string result = test.func();
+        if (result == test.expectedResult)
+        {
+            printf(ANSI_GREEN "PASSED!\n" ANSI_RESET);
+        }
+        else
+        {
+            printf(ANSI_RED_BOLD "FAILED!\n" ANSI_RESET);
+            printf(ANSI_RED "    expected \"%s\", found \"%s\"\n" ANSI_RESET, test.expectedResult.c_str(), result.c_str());
+            passed = false;
+        }
     }
+
+    return passed ? 0 : 1;
 }
