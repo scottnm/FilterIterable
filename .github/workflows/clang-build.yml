@@ -16,4 +16,4 @@ jobs:
     - name: make clang
       run: make -C cicd_build/ clang_validation
     - name: test clang
-      run: cicd_build/a.out
+      run: cicd_build/FilterIterable_clang

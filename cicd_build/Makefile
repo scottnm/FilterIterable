@@ -1,7 +1,7 @@
 gcc_validation:
-	gcc ../*.cpp -lstdc++
+	gcc ../*.cpp -lstdc++ -o FilterIterable_gcc
 
 clang_validation:
-	clang ../*.cpp -lstdc++
+	clang ../*.cpp -lstdc++ -o FilterIterable_clang
 
 all: gcc_validation clang_validation

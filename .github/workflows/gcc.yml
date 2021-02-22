@@ -16,4 +16,4 @@ jobs:
     - name: make gcc
       run: make -C cicd_build/ gcc_validation
     - name: test gcc
-      run: cicd_build/a.out
+      run: cicd_build/FilterIterable_gcc
