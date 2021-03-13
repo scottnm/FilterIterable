@@ -14,7 +14,8 @@
 // Define a helper macro to make appending formatted text to a std::string easy.
 // I just don't want to bother with iostream shenanigans. Hurts my eyes.
 #define APPEND_STR(acc, format, ...)                                           \
-    do {                                                                       \
+    do                                                                         \
+    {                                                                          \
         char appendStrTmpBuffer[1024];                                         \
         (void)sprintf_s(appendStrTmpBuffer, format, __VA_ARGS__);              \
         acc += appendStrTmpBuffer;                                             \
@@ -22,12 +23,14 @@
 
 bool IsOdd(int v) { return (v & 1) == 1; }
 
-std::string TestIterableConstruction() {
+std::string TestIterableConstruction()
+{
     std::string result;
 
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     auto iter = FilteredIterable<int[11], bool (*)(int)>(values, IsOdd);
-    for (const int &i : iter) {
+    for (const int &i : iter)
+    {
         APPEND_STR(result, "%i ", i);
     }
 
@@ -35,11 +38,13 @@ std::string TestIterableConstruction() {
     return result;
 }
 
-std::string TestFilterStackArrays() {
+std::string TestFilterStackArrays()
+{
     std::string result;
 
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    for (const int &i : Filter(values, IsOdd)) {
+    for (const int &i : Filter(values, IsOdd))
+    {
         APPEND_STR(result, "%i ", i);
     }
 
@@ -47,11 +52,13 @@ std::string TestFilterStackArrays() {
     return result;
 }
 
-std::string TestFilterContainerTypes() {
+std::string TestFilterContainerTypes()
+{
     std::string result;
 
     std::vector<int> values = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    for (const int &i : Filter(values, IsOdd)) {
+    for (const int &i : Filter(values, IsOdd))
+    {
         APPEND_STR(result, "%i ", i);
     }
 
@@ -59,16 +66,19 @@ std::string TestFilterContainerTypes() {
     return result;
 }
 
-std::string TestFilterNonRandomAccessIterable() {
+std::string TestFilterNonRandomAccessIterable()
+{
     std::string result;
 
     std::list<int> values;
-    for (uint32_t i = 0; i <= 10; ++i) {
+    for (uint32_t i = 0; i <= 10; ++i)
+    {
         values.emplace_back(i);
     }
 
     auto iter = Filter(values, IsOdd);
-    for (const int &i : iter) {
+    for (const int &i : iter)
+    {
         APPEND_STR(result, "%i ", i);
     }
 
@@ -76,7 +86,8 @@ std::string TestFilterNonRandomAccessIterable() {
     return result;
 }
 
-struct SomeObject {
+struct SomeObject
+{
     uint32_t i;
 
     // Delete copy construction, copy assignment, and move assignment to verify
@@ -89,17 +100,20 @@ struct SomeObject {
     SomeObject &operator=(SomeObject &&) = delete;
 };
 
-std::string TestFilterByObjectProperty() {
+std::string TestFilterByObjectProperty()
+{
     std::string result;
 
     std::list<SomeObject> values;
-    for (uint32_t i = 0; i <= 10; ++i) {
+    for (uint32_t i = 0; i <= 10; ++i)
+    {
         values.emplace_back(i);
     }
 
     auto iter =
         Filter(values, [](const SomeObject &so) { return !IsOdd(so.i); });
-    for (const SomeObject &so : iter) {
+    for (const SomeObject &so : iter)
+    {
         APPEND_STR(result, "so(%i) ", so.i);
     }
 
@@ -107,7 +121,8 @@ std::string TestFilterByObjectProperty() {
     return result;
 }
 
-std::string TestFilterByUniqueObject() {
+std::string TestFilterByUniqueObject()
+{
     std::string result;
 
     SomeObject values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -115,7 +130,8 @@ std::string TestFilterByUniqueObject() {
     const SomeObject &so3 = values[3];
     auto iter =
         Filter(values, [&so3](const SomeObject &so) { return &so != &so3; });
-    for (const SomeObject &so : iter) {
+    for (const SomeObject &so : iter)
+    {
         APPEND_STR(result, "so(%i) ", so.i);
     }
 
@@ -124,15 +140,18 @@ std::string TestFilterByUniqueObject() {
 }
 
 template <typename T>
-std::function<bool(const T &)> Excluder(const T &elementToExclude) {
+std::function<bool(const T &)> Excluder(const T &elementToExclude)
+{
     return [&elementToExclude](const T &t) { return &t != &elementToExclude; };
 }
 
-std::string TestFilterWithHigherOrderFunctions() {
+std::string TestFilterWithHigherOrderFunctions()
+{
     std::string result;
 
     SomeObject values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    for (const SomeObject &so : Filter(values, Excluder(values[4]))) {
+    for (const SomeObject &so : Filter(values, Excluder(values[4])))
+    {
         APPEND_STR(result, "so(%i) ", so.i);
     }
 
@@ -140,10 +159,12 @@ std::string TestFilterWithHigherOrderFunctions() {
     return result;
 }
 
-int main() {
+int main()
+{
     typedef std::string (*testfunc)(void);
 
-    struct Test {
+    struct Test
+    {
         const char *name;
         testfunc func;
         std::string expectedResult;
@@ -168,12 +189,16 @@ int main() {
 #define ANSI_RESET "\033[0m"
 
     bool passed = true;
-    for (const auto &test : tests) {
+    for (const auto &test : tests)
+    {
         printf("Testing %s... ", test.name);
         std::string result = test.func();
-        if (result == test.expectedResult) {
+        if (result == test.expectedResult)
+        {
             printf(ANSI_GREEN "PASSED!\n" ANSI_RESET);
-        } else {
+        }
+        else
+        {
             printf(ANSI_RED_BOLD "FAILED!\n" ANSI_RESET);
             printf(ANSI_RED "    expected \"%s\", found \"%s\"\n" ANSI_RESET,
                    test.expectedResult.c_str(), result.c_str());
