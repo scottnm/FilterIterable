@@ -29,7 +29,7 @@ std::string TestIterableConstruction()
 
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     auto iter = FilteredIterable<int[11], bool (*)(int)>(values, IsOdd);
-    for (const int &i : iter)
+    for (const int& i : iter)
     {
         APPEND_STR(result, "%i ", i);
     }
@@ -43,7 +43,7 @@ std::string TestFilterStackArrays()
     std::string result;
 
     int values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    for (const int &i : Filter(values, IsOdd))
+    for (const int& i : Filter(values, IsOdd))
     {
         APPEND_STR(result, "%i ", i);
     }
@@ -57,7 +57,7 @@ std::string TestFilterContainerTypes()
     std::string result;
 
     std::vector<int> values = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    for (const int &i : Filter(values, IsOdd))
+    for (const int& i : Filter(values, IsOdd))
     {
         APPEND_STR(result, "%i ", i);
     }
@@ -77,7 +77,7 @@ std::string TestFilterNonRandomAccessIterable()
     }
 
     auto iter = Filter(values, IsOdd);
-    for (const int &i : iter)
+    for (const int& i : iter)
     {
         APPEND_STR(result, "%i ", i);
     }
@@ -94,10 +94,10 @@ struct SomeObject
     // that no part of the filter performs copies. Leave the move constructor
     // alone since it's used by the array initializers
     SomeObject(int i) : i(i) {}
-    SomeObject(SomeObject &&) = default;
-    SomeObject(const SomeObject &) = delete;
-    SomeObject &operator=(const SomeObject &) = delete;
-    SomeObject &operator=(SomeObject &&) = delete;
+    SomeObject(SomeObject&&) = default;
+    SomeObject(const SomeObject&) = delete;
+    SomeObject& operator=(const SomeObject&) = delete;
+    SomeObject& operator=(SomeObject&&) = delete;
 };
 
 std::string TestFilterByObjectProperty()
@@ -110,8 +110,8 @@ std::string TestFilterByObjectProperty()
         values.emplace_back(i);
     }
 
-    auto iter = Filter(values, [](const SomeObject &so) { return !IsOdd(so.i); });
-    for (const SomeObject &so : iter)
+    auto iter = Filter(values, [](const SomeObject& so) { return !IsOdd(so.i); });
+    for (const SomeObject& so : iter)
     {
         APPEND_STR(result, "so(%i) ", so.i);
     }
@@ -126,9 +126,9 @@ std::string TestFilterByUniqueObject()
 
     SomeObject values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-    const SomeObject &so3 = values[3];
-    auto iter = Filter(values, [&so3](const SomeObject &so) { return &so != &so3; });
-    for (const SomeObject &so : iter)
+    const SomeObject& so3 = values[3];
+    auto iter = Filter(values, [&so3](const SomeObject& so) { return &so != &so3; });
+    for (const SomeObject& so : iter)
     {
         APPEND_STR(result, "so(%i) ", so.i);
     }
@@ -138,9 +138,9 @@ std::string TestFilterByUniqueObject()
 }
 
 template <typename T>
-std::function<bool(const T &)> Excluder(const T &elementToExclude)
+std::function<bool(const T&)> Excluder(const T& elementToExclude)
 {
-    return [&elementToExclude](const T &t) { return &t != &elementToExclude; };
+    return [&elementToExclude](const T& t) { return &t != &elementToExclude; };
 }
 
 std::string TestFilterWithHigherOrderFunctions()
@@ -148,7 +148,7 @@ std::string TestFilterWithHigherOrderFunctions()
     std::string result;
 
     SomeObject values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    for (const SomeObject &so : Filter(values, Excluder(values[4])))
+    for (const SomeObject& so : Filter(values, Excluder(values[4])))
     {
         APPEND_STR(result, "so(%i) ", so.i);
     }
@@ -163,7 +163,7 @@ int main()
 
     struct Test
     {
-        const char *name;
+        const char* name;
         testfunc func;
         std::string expectedResult;
     };
@@ -184,7 +184,7 @@ int main()
 #define ANSI_RESET "\033[0m"
 
     bool passed = true;
-    for (const auto &test : tests)
+    for (const auto& test : tests)
     {
         printf("Testing %s... ", test.name);
         std::string result = test.func();

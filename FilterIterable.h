@@ -18,21 +18,21 @@ public:
     };
 
     template <class T>
-    struct IteratorType<T *>
+    struct IteratorType<T*>
     {
-        typedef T *type;
+        typedef T* type;
     };
 
     template <typename T, size_t N>
     struct IteratorType<T[N]>
     {
-        typedef T *type;
+        typedef T* type;
     };
 
     typedef typename IteratorType<TIterable>::type TIterator;
     typedef typename std::iterator_traits<TIterator>::value_type TItem;
 
-    FilteredIterable(TIterable &iterable, TPredicate predicate) : iterable(iterable), predicate(predicate)
+    FilteredIterable(TIterable& iterable, TPredicate predicate) : iterable(iterable), predicate(predicate)
     {
 #ifdef PRINT_ITER_TYPES
         printf("iterable: %s\niterator: %s\n", typeid(TIterable).name(), typeid(TIterator).name());
@@ -42,7 +42,7 @@ public:
     class FilterIterator
     {
     public:
-        FilterIterator(const TIterator &current, const TIterator &end, TPredicate predicate) :
+        FilterIterator(const TIterator& current, const TIterator& end, TPredicate predicate) :
             current(current),
             end(end),
             predicate(predicate)
@@ -50,19 +50,19 @@ public:
             AdvanceUntilValid();
         }
 
-        FilterIterator &operator++()
+        FilterIterator& operator++()
         {
             ++current;
             AdvanceUntilValid();
             return *this;
         }
 
-        bool operator==(const FilterIterator &other) { return current == other.current; }
-        bool operator!=(const FilterIterator &other) { return !(*this == other); }
-        TItem *operator->() { return current; }
-        TItem &operator*() { return *current; }
-        const TItem *operator->() const { return current; }
-        const TItem &operator*() const { return *current; }
+        bool operator==(const FilterIterator& other) { return current == other.current; }
+        bool operator!=(const FilterIterator& other) { return !(*this == other); }
+        TItem* operator->() { return current; }
+        TItem& operator*() { return *current; }
+        const TItem* operator->() const { return current; }
+        const TItem& operator*() const { return *current; }
 
     private:
         void AdvanceUntilValid()
@@ -83,7 +83,7 @@ public:
     FilterIterator end() { return FilterIterator(std::end(iterable), std::end(iterable), predicate); }
 
 private:
-    TIterable &iterable;
+    TIterable& iterable;
     TPredicate predicate;
 };
 
@@ -92,7 +92,7 @@ private:
 // construct the FilteredIterable for us with inferred template args.
 //
 template <typename TIterable, typename TPredicate>
-FilteredIterable<TIterable, TPredicate> Filter(TIterable &iterable, TPredicate predicate)
+FilteredIterable<TIterable, TPredicate> Filter(TIterable& iterable, TPredicate predicate)
 {
     return FilteredIterable<TIterable, TPredicate>{iterable, predicate};
 }

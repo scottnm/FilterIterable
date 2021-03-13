@@ -148,7 +148,10 @@ PenaltyBreakString: 1000
 PenaltyBreakTemplateDeclaration: 10
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
-PointerAlignment: Right
+
+# Align pointers so they attach to their type and not their name
+PointerAlignment: Left
+
 ReflowComments:  true
 SortIncludes:    true
 SortUsingDeclarations: true
