@@ -1,0 +1,5 @@
+# clang-format integration notes
+
+- clang-format available for windows @ https://llvm.org/builds/ as part of LLVM install
+
+- uh-oh, did I just wipe my rust install's version of LLVM?
