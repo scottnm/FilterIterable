@@ -5,8 +5,7 @@
 #include <type_traits>
 
 //
-// An iterable over all elements of the source iterable which match the
-// predicate
+// An iterable over all elements of the source iterable which match the predicate
 //
 template <typename TIterable, typename TPredicate> class FilteredIterable
 {
@@ -83,9 +82,8 @@ private:
 };
 
 //
-// Template parameter inference apparently only works for functions and not
-// classes. Define this filter function to construct the FilteredIterable for us
-// with inferred template args.
+// Template parameter inference apparently only works for functions and not classes. Define this filter function to
+// construct the FilteredIterable for us with inferred template args.
 //
 template <typename TIterable, typename TPredicate>
 FilteredIterable<TIterable, TPredicate> Filter(TIterable &iterable, TPredicate predicate)
