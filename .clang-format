@@ -1,7 +1,15 @@
 ---
 Language:        Cpp
 # BasedOnStyle:  LLVM
+
+# Make class access modifiers align with left side of the class definition
+# class Foo
+# {
+# public:
+#    ...
+# }
 AccessModifierOffset: -4
+
 AlignAfterOpenBracket: Align
 AlignConsecutiveMacros: false
 AlignConsecutiveAssignments: false
@@ -26,6 +34,8 @@ AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: MultiLine
 BinPackArguments: true
 BinPackParameters: true
+
+# IGNORE: BraceWrapping is only used when BreakBeforeBraces is set to Custom
 BraceWrapping:
   AfterCaseLabel:  false
   AfterClass:      false
@@ -45,8 +55,15 @@ BraceWrapping:
   SplitEmptyFunction: true
   SplitEmptyRecord: true
   SplitEmptyNamespace: true
+
 BreakBeforeBinaryOperators: None
+
+# Allman style braces means "each brace on it's own line"
+# void function()
+# {
+# }
 BreakBeforeBraces: Allman
+
 BreakBeforeInheritanceComma: false
 BreakInheritanceList: BeforeColon
 BreakBeforeTernaryOperators: true
@@ -88,7 +105,13 @@ IndentCaseBlocks: false
 IndentGotoLabels: true
 IndentPPDirectives: None
 IndentExternBlock: AfterExternBlock
+
+# Use 4 spaces for each indent level. For some reason all of the base style prefer 2.
+# void function()
+# {
+#     // indented
 IndentWidth:     4
+
 IndentWrappedFunctionNames: false
 InsertTrailingCommas: None
 JavaScriptQuotes: Leave
