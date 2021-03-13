@@ -38,8 +38,10 @@ public:
     class FilterIterator
     {
     public:
-        FilterIterator(const TIterator &current, const TIterator &end, TPredicate predicate)
-            : current(current), end(end), predicate(predicate)
+        FilterIterator(const TIterator &current, const TIterator &end, TPredicate predicate) :
+            current(current),
+            end(end),
+            predicate(predicate)
         {
             AdvanceUntilValid();
         }
