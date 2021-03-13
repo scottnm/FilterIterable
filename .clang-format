@@ -1,3 +1,4 @@
+# For full reference see: https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 ---
 Language:        Cpp
 # BasedOnStyle:  LLVM
@@ -39,7 +40,7 @@ AllowShortLambdasOnASingleLine: All
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterDefinitionReturnType: None
-AlwaysBreakAfterReturnType: None
+AlwaysBreakAfterReturnType: All
 AlwaysBreakBeforeMultilineStrings: false
 
 

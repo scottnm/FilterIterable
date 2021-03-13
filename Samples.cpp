@@ -21,9 +21,14 @@
         acc += appendStrTmpBuffer;                                                                                     \
     } while (0)
 
-bool IsOdd(int v) { return (v & 1) == 1; }
+bool
+IsOdd(int v)
+{
+    return (v & 1) == 1;
+}
 
-std::string TestIterableConstruction()
+std::string
+TestIterableConstruction()
 {
     std::string result;
 
@@ -38,7 +43,8 @@ std::string TestIterableConstruction()
     return result;
 }
 
-std::string TestFilterStackArrays()
+std::string
+TestFilterStackArrays()
 {
     std::string result;
 
@@ -52,7 +58,8 @@ std::string TestFilterStackArrays()
     return result;
 }
 
-std::string TestFilterContainerTypes()
+std::string
+TestFilterContainerTypes()
 {
     std::string result;
 
@@ -66,7 +73,8 @@ std::string TestFilterContainerTypes()
     return result;
 }
 
-std::string TestFilterNonRandomAccessIterable()
+std::string
+TestFilterNonRandomAccessIterable()
 {
     std::string result;
 
@@ -96,11 +104,14 @@ struct SomeObject
     SomeObject(int i) : i(i) {}
     SomeObject(SomeObject&&) = default;
     SomeObject(const SomeObject&) = delete;
-    SomeObject& operator=(const SomeObject&) = delete;
-    SomeObject& operator=(SomeObject&&) = delete;
+    SomeObject&
+    operator=(const SomeObject&) = delete;
+    SomeObject&
+    operator=(SomeObject&&) = delete;
 };
 
-std::string TestFilterByObjectProperty()
+std::string
+TestFilterByObjectProperty()
 {
     std::string result;
 
@@ -120,7 +131,8 @@ std::string TestFilterByObjectProperty()
     return result;
 }
 
-std::string TestFilterByUniqueObject()
+std::string
+TestFilterByUniqueObject()
 {
     std::string result;
 
@@ -138,12 +150,14 @@ std::string TestFilterByUniqueObject()
 }
 
 template <typename T>
-std::function<bool(const T&)> Excluder(const T& elementToExclude)
+std::function<bool(const T&)>
+Excluder(const T& elementToExclude)
 {
     return [&elementToExclude](const T& t) { return &t != &elementToExclude; };
 }
 
-std::string TestFilterWithHigherOrderFunctions()
+std::string
+TestFilterWithHigherOrderFunctions()
 {
     std::string result;
 
@@ -157,7 +171,8 @@ std::string TestFilterWithHigherOrderFunctions()
     return result;
 }
 
-int main()
+int
+main()
 {
     typedef std::string (*testfunc)(void);
 

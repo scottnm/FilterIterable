@@ -50,22 +50,48 @@ public:
             AdvanceUntilValid();
         }
 
-        FilterIterator& operator++()
+        FilterIterator&
+        operator++()
         {
             ++current;
             AdvanceUntilValid();
             return *this;
         }
 
-        bool operator==(const FilterIterator& other) { return current == other.current; }
-        bool operator!=(const FilterIterator& other) { return !(*this == other); }
-        TItem* operator->() { return current; }
-        TItem& operator*() { return *current; }
-        const TItem* operator->() const { return current; }
-        const TItem& operator*() const { return *current; }
+        bool
+        operator==(const FilterIterator& other)
+        {
+            return current == other.current;
+        }
+        bool
+        operator!=(const FilterIterator& other)
+        {
+            return !(*this == other);
+        }
+        TItem*
+        operator->()
+        {
+            return current;
+        }
+        TItem&
+        operator*()
+        {
+            return *current;
+        }
+        const TItem*
+        operator->() const
+        {
+            return current;
+        }
+        const TItem&
+        operator*() const
+        {
+            return *current;
+        }
 
     private:
-        void AdvanceUntilValid()
+        void
+        AdvanceUntilValid()
         {
             while (current != end && !predicate(*current))
             {
@@ -78,9 +104,17 @@ public:
         TPredicate predicate;
     };
 
-    FilterIterator begin() { return FilterIterator(std::begin(iterable), std::end(iterable), predicate); }
+    FilterIterator
+    begin()
+    {
+        return FilterIterator(std::begin(iterable), std::end(iterable), predicate);
+    }
 
-    FilterIterator end() { return FilterIterator(std::end(iterable), std::end(iterable), predicate); }
+    FilterIterator
+    end()
+    {
+        return FilterIterator(std::end(iterable), std::end(iterable), predicate);
+    }
 
 private:
     TIterable& iterable;
@@ -92,7 +126,8 @@ private:
 // construct the FilteredIterable for us with inferred template args.
 //
 template <typename TIterable, typename TPredicate>
-FilteredIterable<TIterable, TPredicate> Filter(TIterable& iterable, TPredicate predicate)
+FilteredIterable<TIterable, TPredicate>
+Filter(TIterable& iterable, TPredicate predicate)
 {
     return FilteredIterable<TIterable, TPredicate>{iterable, predicate};
 }
