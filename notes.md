@@ -11,3 +11,5 @@
 - .clang-format fixes macro continuation lines
 
 - .clang-format doesn't seem to force reformat comments right
+
+- `// clang-format off/on` useful for telling clang-format to shutup

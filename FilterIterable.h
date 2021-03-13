@@ -59,6 +59,7 @@ public:
         }
 
         // clang-format off
+        //     short oneliners for simple operator overloads
         bool operator==(const FilterIterator& other) { return current == other.current; }
         bool operator!=(const FilterIterator& other) { return !(*this == other); }
         TItem* operator->() { return current; }
