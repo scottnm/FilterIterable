@@ -4,4 +4,6 @@
 
 - uh-oh, did I just wipe my rust install's version of LLVM?
 
-- Dump a base format with `clang-format --style=llvm -dump-config > .clang-format`
+- Dump a base format with... `clang-format --style=llvm -dump-config > .clang-format`
+
+- Apply .clang-format file with... `clang-format -style=file *.cpp *.h -i`
