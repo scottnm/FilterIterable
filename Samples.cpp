@@ -137,7 +137,8 @@ std::string TestFilterByUniqueObject()
     return result;
 }
 
-template <typename T> std::function<bool(const T &)> Excluder(const T &elementToExclude)
+template <typename T>
+std::function<bool(const T &)> Excluder(const T &elementToExclude)
 {
     return [&elementToExclude](const T &t) { return &t != &elementToExclude; };
 }

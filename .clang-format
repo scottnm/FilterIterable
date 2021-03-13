@@ -41,7 +41,13 @@ AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
-AlwaysBreakTemplateDeclarations: MultiLine
+
+
+# Set to "Yes" to force all template declarations on their own line even when wrapping doesn't require it
+# template<typename T>
+# void function()
+AlwaysBreakTemplateDeclarations: Yes
+
 BinPackArguments: true
 BinPackParameters: true
 

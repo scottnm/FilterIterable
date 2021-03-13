@@ -7,20 +7,24 @@
 //
 // An iterable over all elements of the source iterable which match the predicate
 //
-template <typename TIterable, typename TPredicate> class FilteredIterable
+template <typename TIterable, typename TPredicate>
+class FilteredIterable
 {
 public:
-    template <typename T> struct IteratorType
+    template <typename T>
+    struct IteratorType
     {
         typedef typename T::iterator type;
     };
 
-    template <class T> struct IteratorType<T *>
+    template <class T>
+    struct IteratorType<T *>
     {
         typedef T *type;
     };
 
-    template <typename T, size_t N> struct IteratorType<T[N]>
+    template <typename T, size_t N>
+    struct IteratorType<T[N]>
     {
         typedef T *type;
     };
