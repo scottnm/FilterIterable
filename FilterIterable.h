@@ -58,36 +58,14 @@ public:
             return *this;
         }
 
-        bool
-        operator==(const FilterIterator& other)
-        {
-            return current == other.current;
-        }
-        bool
-        operator!=(const FilterIterator& other)
-        {
-            return !(*this == other);
-        }
-        TItem*
-        operator->()
-        {
-            return current;
-        }
-        TItem&
-        operator*()
-        {
-            return *current;
-        }
-        const TItem*
-        operator->() const
-        {
-            return current;
-        }
-        const TItem&
-        operator*() const
-        {
-            return *current;
-        }
+        // clang-format off
+        bool operator==(const FilterIterator& other) { return current == other.current; }
+        bool operator!=(const FilterIterator& other) { return !(*this == other); }
+        TItem* operator->() { return current; }
+        TItem& operator*() { return *current; }
+        const TItem* operator->() const { return current; }
+        const TItem& operator*() const { return *current; }
+        // clang-format on
 
     private:
         void
