@@ -7,3 +7,5 @@
 - Dump a base format with... `clang-format --style=llvm -dump-config > .clang-format`
 
 - Apply .clang-format file with... `clang-format -style=file *.cpp *.h -i`
+
+- .clang-format fixes macro continuation lines
