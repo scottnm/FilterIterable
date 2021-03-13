@@ -29,20 +29,17 @@ public:
     typedef typename IteratorType<TIterable>::type TIterator;
     typedef typename std::iterator_traits<TIterator>::value_type TItem;
 
-    FilteredIterable(TIterable &iterable, TPredicate predicate)
-        : iterable(iterable), predicate(predicate)
+    FilteredIterable(TIterable &iterable, TPredicate predicate) : iterable(iterable), predicate(predicate)
     {
 #ifdef PRINT_ITER_TYPES
-        printf("iterable: %s\niterator: %s\n", typeid(TIterable).name(),
-               typeid(TIterator).name());
+        printf("iterable: %s\niterator: %s\n", typeid(TIterable).name(), typeid(TIterator).name());
 #endif // PRINT_ITER_TYPES
     }
 
     class FilterIterator
     {
     public:
-        FilterIterator(const TIterator &current, const TIterator &end,
-                       TPredicate predicate)
+        FilterIterator(const TIterator &current, const TIterator &end, TPredicate predicate)
             : current(current), end(end), predicate(predicate)
         {
             AdvanceUntilValid();
@@ -55,14 +52,8 @@ public:
             return *this;
         }
 
-        bool operator==(const FilterIterator &other)
-        {
-            return current == other.current;
-        }
-        bool operator!=(const FilterIterator &other)
-        {
-            return !(*this == other);
-        }
+        bool operator==(const FilterIterator &other) { return current == other.current; }
+        bool operator!=(const FilterIterator &other) { return !(*this == other); }
         TItem *operator->() { return current; }
         TItem &operator*() { return *current; }
         const TItem *operator->() const { return current; }
@@ -82,17 +73,9 @@ public:
         TPredicate predicate;
     };
 
-    FilterIterator begin()
-    {
-        return FilterIterator(std::begin(iterable), std::end(iterable),
-                              predicate);
-    }
+    FilterIterator begin() { return FilterIterator(std::begin(iterable), std::end(iterable), predicate); }
 
-    FilterIterator end()
-    {
-        return FilterIterator(std::end(iterable), std::end(iterable),
-                              predicate);
-    }
+    FilterIterator end() { return FilterIterator(std::end(iterable), std::end(iterable), predicate); }
 
 private:
     TIterable &iterable;
@@ -105,8 +88,7 @@ private:
 // with inferred template args.
 //
 template <typename TIterable, typename TPredicate>
-FilteredIterable<TIterable, TPredicate> Filter(TIterable &iterable,
-                                               TPredicate predicate)
+FilteredIterable<TIterable, TPredicate> Filter(TIterable &iterable, TPredicate predicate)
 {
     return FilteredIterable<TIterable, TPredicate>{iterable, predicate};
 }

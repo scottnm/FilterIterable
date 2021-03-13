@@ -13,12 +13,12 @@
 
 // Define a helper macro to make appending formatted text to a std::string easy.
 // I just don't want to bother with iostream shenanigans. Hurts my eyes.
-#define APPEND_STR(acc, format, ...)                                           \
-    do                                                                         \
-    {                                                                          \
-        char appendStrTmpBuffer[1024];                                         \
-        (void)sprintf_s(appendStrTmpBuffer, format, __VA_ARGS__);              \
-        acc += appendStrTmpBuffer;                                             \
+#define APPEND_STR(acc, format, ...)                                                                                   \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        char appendStrTmpBuffer[1024];                                                                                 \
+        (void)sprintf_s(appendStrTmpBuffer, format, __VA_ARGS__);                                                      \
+        acc += appendStrTmpBuffer;                                                                                     \
     } while (0)
 
 bool IsOdd(int v) { return (v & 1) == 1; }
@@ -110,8 +110,7 @@ std::string TestFilterByObjectProperty()
         values.emplace_back(i);
     }
 
-    auto iter =
-        Filter(values, [](const SomeObject &so) { return !IsOdd(so.i); });
+    auto iter = Filter(values, [](const SomeObject &so) { return !IsOdd(so.i); });
     for (const SomeObject &so : iter)
     {
         APPEND_STR(result, "so(%i) ", so.i);
@@ -128,8 +127,7 @@ std::string TestFilterByUniqueObject()
     SomeObject values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     const SomeObject &so3 = values[3];
-    auto iter =
-        Filter(values, [&so3](const SomeObject &so) { return &so != &so3; });
+    auto iter = Filter(values, [&so3](const SomeObject &so) { return &so != &so3; });
     for (const SomeObject &so : iter)
     {
         APPEND_STR(result, "so(%i) ", so.i);
@@ -139,8 +137,7 @@ std::string TestFilterByUniqueObject()
     return result;
 }
 
-template <typename T>
-std::function<bool(const T &)> Excluder(const T &elementToExclude)
+template <typename T> std::function<bool(const T &)> Excluder(const T &elementToExclude)
 {
     return [&elementToExclude](const T &t) { return &t != &elementToExclude; };
 }
@@ -170,18 +167,15 @@ int main()
         std::string expectedResult;
     };
 
-    Test tests[] = {
-        {"IterableConstruction", TestIterableConstruction, "1 3 5 7 9"},
-        {"FilterStackArrays", TestFilterStackArrays, "1 3 5 7 9"},
-        {"FilterContainerTypes", TestFilterContainerTypes, "1 3 5 7 9"},
-        {"FilterNonRandomAccessIterable", TestFilterNonRandomAccessIterable,
-         "1 3 5 7 9"},
-        {"FilterByObjectProperty", TestFilterByObjectProperty,
-         "so(0) so(2) so(4) so(6) so(8) so(10)"},
-        {"FilterByUniqueObject", TestFilterByUniqueObject,
-         "so(0) so(1) so(2) so(4) so(5) so(6) so(7) so(8) so(9) so(10)"},
-        {"FilterWithHigherOrderFunctions", TestFilterWithHigherOrderFunctions,
-         "so(0) so(1) so(2) so(3) so(5) so(6) so(7) so(8) so(9) so(10)"}};
+    Test tests[] = {{"IterableConstruction", TestIterableConstruction, "1 3 5 7 9"},
+                    {"FilterStackArrays", TestFilterStackArrays, "1 3 5 7 9"},
+                    {"FilterContainerTypes", TestFilterContainerTypes, "1 3 5 7 9"},
+                    {"FilterNonRandomAccessIterable", TestFilterNonRandomAccessIterable, "1 3 5 7 9"},
+                    {"FilterByObjectProperty", TestFilterByObjectProperty, "so(0) so(2) so(4) so(6) so(8) so(10)"},
+                    {"FilterByUniqueObject", TestFilterByUniqueObject,
+                     "so(0) so(1) so(2) so(4) so(5) so(6) so(7) so(8) so(9) so(10)"},
+                    {"FilterWithHigherOrderFunctions", TestFilterWithHigherOrderFunctions,
+                     "so(0) so(1) so(2) so(3) so(5) so(6) so(7) so(8) so(9) so(10)"}};
 
 #define ANSI_RED "\033[31m"
 #define ANSI_RED_BOLD "\033[1;31m"
@@ -200,8 +194,8 @@ int main()
         else
         {
             printf(ANSI_RED_BOLD "FAILED!\n" ANSI_RESET);
-            printf(ANSI_RED "    expected \"%s\", found \"%s\"\n" ANSI_RESET,
-                   test.expectedResult.c_str(), result.c_str());
+            printf(ANSI_RED "    expected \"%s\", found \"%s\"\n" ANSI_RESET, test.expectedResult.c_str(),
+                   result.c_str());
             passed = false;
         }
     }
