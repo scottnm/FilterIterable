@@ -9,3 +9,5 @@
 - Apply .clang-format file with... `clang-format -style=file *.cpp *.h -i`
 
 - .clang-format fixes macro continuation lines
+
+- .clang-format doesn't seem to force reformat comments right
