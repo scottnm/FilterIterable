@@ -49,8 +49,8 @@ AlwaysBreakBeforeMultilineStrings: false
 # void function()
 AlwaysBreakTemplateDeclarations: Yes
 
-BinPackArguments: true
-BinPackParameters: true
+BinPackArguments: false
+BinPackParameters: false
 
 # IGNORE: BraceWrapping is only used when BreakBeforeBraces is set to Custom
 BraceWrapping:

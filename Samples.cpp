@@ -188,9 +188,11 @@ main()
                     {"FilterContainerTypes", TestFilterContainerTypes, "1 3 5 7 9"},
                     {"FilterNonRandomAccessIterable", TestFilterNonRandomAccessIterable, "1 3 5 7 9"},
                     {"FilterByObjectProperty", TestFilterByObjectProperty, "so(0) so(2) so(4) so(6) so(8) so(10)"},
-                    {"FilterByUniqueObject", TestFilterByUniqueObject,
+                    {"FilterByUniqueObject",
+                     TestFilterByUniqueObject,
                      "so(0) so(1) so(2) so(4) so(5) so(6) so(7) so(8) so(9) so(10)"},
-                    {"FilterWithHigherOrderFunctions", TestFilterWithHigherOrderFunctions,
+                    {"FilterWithHigherOrderFunctions",
+                     TestFilterWithHigherOrderFunctions,
                      "so(0) so(1) so(2) so(3) so(5) so(6) so(7) so(8) so(9) so(10)"}};
 
 #define ANSI_RED "\033[31m"
@@ -210,8 +212,8 @@ main()
         else
         {
             printf(ANSI_RED_BOLD "FAILED!\n" ANSI_RESET);
-            printf(ANSI_RED "    expected \"%s\", found \"%s\"\n" ANSI_RESET, test.expectedResult.c_str(),
-                   result.c_str());
+            printf(
+                ANSI_RED "    expected \"%s\", found \"%s\"\n" ANSI_RESET, test.expectedResult.c_str(), result.c_str());
             passed = false;
         }
     }
