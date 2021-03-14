@@ -180,7 +180,7 @@ main()
     {
         const char* name;
         testfunc func;
-        std::string expectedResult;
+        std::string expected;
     };
 
     Test tests[] = {{"IterableConstruction", TestIterableConstruction, "1 3 5 7 9"},
@@ -205,15 +205,14 @@ main()
     {
         printf("Testing %s... ", test.name);
         std::string result = test.func();
-        if (result == test.expectedResult)
+        if (result == test.expected)
         {
             printf(ANSI_GREEN "PASSED!\n" ANSI_RESET);
         }
         else
         {
             printf(ANSI_RED_BOLD "FAILED!\n" ANSI_RESET);
-            printf(
-                ANSI_RED "    expected \"%s\", found \"%s\"\n" ANSI_RESET, test.expectedResult.c_str(), result.c_str());
+            printf(ANSI_RED "    expected \"%s\", found \"%s\"\n" ANSI_RESET, test.expected.c_str(), result.c_str());
             passed = false;
         }
     }
